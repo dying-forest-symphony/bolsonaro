@@ -21,10 +21,25 @@ var build = write.buildFile();
 
 const fs = require('fs');
 
-fs.writeFile('symphony.mid', build, (err) => {
-    // throws an error, you could also catch it here
-    if (err) throw err;
+// fs.writeFile('symphony.mid', build, (err) => {
+//     // throws an error, you could also catch it here
+//     if (err) throw err;
 
-    // success case, the file was saved
-    console.log('file saved!');
+//     // success case, the file was saved
+//     console.log('file saved!');
+// });
+
+var inputs = [];
+
+var lineReader = require('readline').createInterface({
+  input: require('fs').createReadStream('viirs.raw.ordered.csv')
 });
+
+lineReader.on('line', function (line) {
+    inputs.push(parseInt(line, 10))
+});
+
+lineReader.on('close', function() {
+    console.log(inputs); // has its values now
+});
+
