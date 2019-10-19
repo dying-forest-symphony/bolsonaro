@@ -1,20 +1,16 @@
 var MidiWriter = require('midi-writer-js');
 
-function buildSong() {
+function buildSong(fireData) {
     var track = new MidiWriter.Track();
 
-    track.addEvent([
-        new MidiWriter.NoteEvent({pitch: ['E4','D4'], duration: '4'}),
-        new MidiWriter.NoteEvent({pitch: ['C4'], duration: '2'}),
-        new MidiWriter.NoteEvent({pitch: ['E4','D4'], duration: '4'}),
-        new MidiWriter.NoteEvent({pitch: ['C4'], duration: '2'}),
-        new MidiWriter.NoteEvent({pitch: ['C4', 'C4', 'C4', 'C4', 'D4', 'D4', 'D4', 'D4'], duration: '8'}),
-        new MidiWriter.NoteEvent({pitch: ['E4','D4'], duration: '4'}),
-        new MidiWriter.NoteEvent({pitch: ['C4'], duration: '2'})
-      ], function(event, index) {
-        return {sequential: true};
-      }
-    );
+    for( var i = 0; i < fireData.length; i++) {
+        track.addEvent([
+            new MidiWriter.NoteEvent({pitch: ['C4'], duration: '2'}),
+          ], function(event, index) {
+            return {sequential: true};
+          }
+        );
+    }
 
     var write = new MidiWriter.Writer(track);
     return write.buildFile();
@@ -32,8 +28,9 @@ function saveSongToFile(song) {
     });
 }
 
-function publishSong() {
-    var song = buildSong();
+function publishSong(fireData) {
+    var song = buildSong(fireData);
+
     saveSongToFile(song);
 }
 
@@ -50,8 +47,7 @@ function run() {
     });
 
     lineReader.on('close', function() {
-        publishSong();
-        console.log(inputs); // has its values now
+        publishSong(inputs);
     });
 }
 
