@@ -14,6 +14,6 @@ function saveSongToFile(song) {
 }
 
 module.exports = function saveSong(fireData) {
-    var song = buildSong(fireData);
+    const song = buildSong(fireData);
     saveSongToFile(song);
 }
