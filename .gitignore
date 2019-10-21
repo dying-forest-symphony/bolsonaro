@@ -1,2 +1,3 @@
 node_modules/
-symphony.mid
+tracks/*
+out.mid
