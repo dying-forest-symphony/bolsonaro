@@ -54,34 +54,53 @@ module.exports = function buildSong(fireData) {
     blownBottleTrack.addEvent(new MidiWriter.ProgramChangeEvent({instrument: BLOWN_BOTTLE}));
 
     for(let i = 0; i < fireData.length; i++) {
-        const datum = fireData[i];
+        const datum = fireData[i].sum;
 
-        const pianoTone = new NotePicker(datum, track, {
-          pitches: ['C1'],
-          velocity: 0,
-          channel: 1,
-        });
+        track.addEvent([
+          new MidiWriter.NoteEvent({
+            pitch: ['C1'],
+            duration: '16',
+            velocity: velocity(datum),
+            channel: 1,
+          })], (event, index) => {
+              return {sequential: true};
+            }
+        );
 
-        const guitarTone = new NotePicker(datum, guitarTrack, {
-          pitches: ['A1'],
-          velocity: velocity(datum),
-          channel: 2,
-        });
+        guitarTrack.addEvent([
+          new MidiWriter.NoteEvent({
+            pitch: ['A1'],
+            duration: '16',
+            velocity: velocity(datum),
+            channel: 2,
+          })], (event, index) => {
+              return {sequential: true};
+            }
+        );
 
-        const CymbalTone = new NotePicker(datum, cymbalTrack, {
-          pitches: ['G8'],
-          velocity: velocityCymbal(datum),
-          channel: 3,
-        });
+        cymbalTrack.addEvent([
+          new MidiWriter.NoteEvent({
+            pitch: ['G8'],
+            duration: '16',
+            velocity: velocityCymbal(datum),
+            channel: 3
+          })], (event, index) => {
+              return {sequential: true};
+            }
+        );
 
-        const BlownBottleTone = new NotePicker(datum, blownBottleTrack, {
-          pitches: ['E1'],
-          velocity: velocityBlownBottle(datum),
-          channel: 4,
-          sequential: false,
-        });
+        blownBottleTrack.addEvent([
+          new MidiWriter.NoteEvent({
+            pitch: ['E1'],
+            duration: '16',
+            velocity: velocityBlownBottle(datum),
+            channel: 4
+          })], (event, index) => {
+              return {sequential: true};
+            }
+        );
     }
 
-    var write = new MidiWriter.Writer(track);
-    return write.buildFile();
+    const tracks = [track, guitarTrack, cymbalTrack, blownBottleTrack];
+    return tracks.map((track) => new MidiWriter.Writer(track).buildFile());
 }
